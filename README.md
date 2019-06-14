@@ -71,7 +71,7 @@ FALSE bool, itreation stops. External function must be in this format:
 
 #### dsv_getContainer()
 
-Returns container item address in vector. Note that address changes
+Returns index container address in vector. Note that address changes
 if resize occurs. For example to get pointer of container holding data at index 4:
 
     DS_VECTOR_DATATYPE* data_address = dsv_getContainer(&vtr, 4);
