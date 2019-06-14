@@ -7,7 +7,7 @@
 
 #define DS_VECTOR_DATATYPE void*
 #define DS_VECTOR_ITEM_LIMIT 10000
-#define DS_VECTOR_DEBUG_RESIZE 
+//#define DS_VECTOR_DEBUG_RESIZE 
 
 
 
