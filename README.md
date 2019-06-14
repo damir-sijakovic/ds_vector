@@ -12,7 +12,7 @@ defined by step number. Developed and tested on archlinux/openrc 4.3 kernel, gcc
 
 #### ds_vector.h
 
-In header 'ds_vector.h' data type and vector size limit can be set in:
+In header 'ds_vector.h' data type and vector size limit can be set.
 
     #define DS_VECTOR_DATATYPE void*
     #define DS_VECTOR_ITEM_LIMIT 10000
