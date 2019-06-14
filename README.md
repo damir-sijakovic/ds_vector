@@ -1,7 +1,7 @@
 ## DS_VECTOR v1.0
 
 
-About
+### About
 
 'ds_vector' is a resizable array container with two resize modes.  
 Resize modes are 'DS_VECTOR_MODE_DOUBLE' where memory needed for array doubles
@@ -10,17 +10,18 @@ defined by step number. Developed and tested on archlinux/openrc 4.3 kernel,
 gcc 5.3.0 and valgrind 3.11. 
 
 
-Usage
+### Usage
 
 ds_vector.h
------------
+
 In header 'ds_vector.h' data type and vector size limit can be set in:
+
     #define DS_VECTOR_DATATYPE void*
     #define DS_VECTOR_ITEM_LIMIT 10000
 
 
 dsv_create()
-------------
+
 To create a vector in step mode, call init function:
 
     DSVector *vector = dsv_create(10, DS_VECTOR_MODE_STEP, 1);
@@ -32,14 +33,14 @@ happen per 1 step. In 'DS_VECTOR_MODE_DOUBLE' last argument is ignored.
 
 
 dsv_destroy()
--------------
+
 This function will destroy adt and free memory.
 
     dsv_destroy(vector);
 
 
 dsv_set()
-------------
+
 Inserts data in vector at specified index. If index is above allocated size,
 resize will happen. For example, to add "Some text at index 9" data at index 9.
 
@@ -47,18 +48,18 @@ resize will happen. For example, to add "Some text at index 9" data at index 9.
 
 
 dsv_resize()
-------------
+
 Increase/reduce capacity of vector. Size is limited by DS_VECTOR_ITEM_LIMIT 
 constant. 
 
 
 dsv_shrinkToFit()
------------------
+
 Request container to reduce its capacity to fit its size.
 
 
 dsv_forEach()
--------------
+
 Pass all vector items through external function. If extrenal function returns 
 FALSE bool, itreation stops. External function must be in this format:
     
@@ -71,7 +72,7 @@ FALSE bool, itreation stops. External function must be in this format:
 
 
 dsv_getContainer()
-------------------
+
 Returns container item address in vector. Note that this address changes
 is resize occurs. For example to get pointer to index 4:
 
