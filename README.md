@@ -4,7 +4,7 @@
 ### About
 
 'ds_vector' is a resizable array container with two resize modes. Resize modes are 'DS_VECTOR_MODE_DOUBLE' where 
-memory needed for array doubles with each new step and 'DS_VECTOR_MODE_STEP' where array is resized in steps 
+memory required for array doubles with each new step and 'DS_VECTOR_MODE_STEP' where array is resized in steps 
 defined by step number. Project is developed and tested only on archlinux/openrc 4.3 kernel, gcc 5.3.0 and valgrind 3.11. 
 
 
