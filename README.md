@@ -25,7 +25,7 @@ To create a vector in step mode, call init function:
     DSVector *vector = dsv_create(10, DS_VECTOR_MODE_STEP, 1);
 
 This creates container with 10 items. So there will be no resize untill index 
-after 10 is requested. Resize mode is 'DS_VECTOR_MODE_STEP' with last argument
+after 9 is requested. Resize mode is 'DS_VECTOR_MODE_STEP' with last argument
 beeing 1. 1 means that in DS_VECTOR_MODE_STEP mode, in iteration, resize will 
 happen per 1 step. In 'DS_VECTOR_MODE_DOUBLE' last argument is ignored.
 
