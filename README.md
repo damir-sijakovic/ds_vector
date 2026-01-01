@@ -1,21 +1,20 @@
-![alt text](https://repository-images.githubusercontent.com/192007341/8398a080-e4a7-11e9-8497-2b31c0fe17aa)
+![logo be here](https://repository-images.githubusercontent.com/192007341/8398a080-e4a7-11e9-8497-2b31c0fe17aa)
 
-## DS_VECTOR v1.0
+## DS_VECTOR v0.5
 
 ### About
 
 'ds_vector' is a resizable array container with two resize modes. Resize modes are 'DS_VECTOR_MODE_DOUBLE' where 
 memory required for array doubles with each new step and 'DS_VECTOR_MODE_STEP' where array is resized in steps 
-defined by step number. Project is developed and tested only on archlinux/openrc 4.3 kernel, gcc 5.3.0 and valgrind 3.11. 
+defined by step number. It's now header lib. Just drop .h to your project.
 
 
 ### Usage
 
 #### ds_vector.h
 
-In header 'ds_vector.h' data type and vector size limit can be set.
+In header 'ds_vector.h' vector size limit can be set.
 
-    #define DS_VECTOR_DATATYPE void*
     #define DS_VECTOR_ITEM_LIMIT 10000
 
 
@@ -77,6 +76,8 @@ if resize occurs. For example to get pointer of container holding data at index 
 
     DS_VECTOR_DATATYPE* data_address = dsv_getContainer(&vtr, 4);
     *data_address = "Changed stuff at index 4.";
+
+#### See more examples in /tests directory
 
 ## Licence
 

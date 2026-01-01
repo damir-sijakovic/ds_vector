@@ -1,0 +1,14 @@
+DS_VECTOR
+=========
+
+v0.5
+* Cleanup 
+* Turned into header lib (just copy ds_vector.h to your project)
+* Better error handling
+* Added: int dsv_getNumberOfItems(DSVector *handle);
+         int dsv_getLastItem(DSVector *handle);
+         bool dsv_appendItem(DSVector **handle, void *data);
+         bool dsv_pack(DSVector **handle); 
+
+v0.3
+* A bit more then a prototype
