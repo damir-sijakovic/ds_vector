@@ -13,6 +13,9 @@ Resize modes are 'DS_VECTOR_MODE_DOUBLE' where memory required for
 array doubles with each new step and 'DS_VECTOR_MODE_STEP' where array 
 is resized in steps defined by step number. 
 
+Double mode: 2 4 8 16 ...
+Step mode: 10 10 10 10 ...
+
 \**********************************************************************/
 
 #ifndef	DS_VECTOR_H
@@ -53,20 +56,22 @@ typedef struct DSVector{
  PROTOS
 \**********************************************************************/
 
-DSVector *dsv_create(int size, DSVectorMode mode, int step);
-void dsv_destroy(DSVector *handle);
-void dsv_resize(DSVector **handle, int length);
-bool dsv_set(DSVector **handle, unsigned index, void* data); 
-void* dsv_get(DSVector *handle, unsigned index);
-int dsv_shrinkToFit(DSVector **handle);                                 //cuts down unnecessary allocated slots to lowest possible
-bool dsv_forEach(DSVector **handle, bool (*fn_ptr)(void**));
-void** dsv_getContainer(DSVector **handle, unsigned index);
-DSVector *dsv_createStepMode(int size, int step);
-DSVector *dsv_createDoubleMode(int size);
-int dsv_getNumberOfItems(DSVector *handle);
-int dsv_getLastItem(DSVector *handle);
-bool dsv_appendItem(DSVector **handle, void *data);
-bool dsv_pack(DSVector **handle);                                       //remove empty slots between data -1-3--6 becomes 1,3,6
+DSVector *dsv_create(int size, DSVectorMode mode, int step);            // create element, ignore step arg if in double mode
+void dsv_destroy(DSVector *handle);                                     // free element and memory
+void dsv_resize(DSVector **handle, int length);                         // resize available slot size, it will delete items if size is smaller then current 
+bool dsv_set(DSVector **handle, unsigned index, void* data);            // set data at any slot index, if [0,1000] it will create empty slots from 0 to 1000
+void* dsv_get(DSVector *handle, unsigned index);                        // gets data at slot index
+int dsv_shrinkToFit(DSVector **handle);                                 // cuts down unnecessary leading allocated slots to lowest possible 
+bool dsv_forEach(DSVector **handle, bool (*fn_ptr)(void**));            // do something with your data, see example in tests how to use it
+void** dsv_getContainer(DSVector **handle, unsigned index);             // returns containing slot
+DSVector *dsv_createStepMode(int size, int step);                       // if step is 10, allocation will happen every 10 slots
+DSVector *dsv_createDoubleMode(int size);                               // allocation doubles slots, 2,4,8,16...
+int dsv_getNumberOfItems(DSVector *handle);                             // get number of slots that have data 
+int dsv_getNumberOfSlots(DSVector *handle);                             // get number of all available slots 
+int dsv_getLastItem(DSVector *handle);                                  // index of last slot with data
+bool dsv_appendItem(DSVector **handle, void *data);                     // look for last slot with data, add item after 
+bool dsv_prependItem(DSVector **handle, void *data);                    // insert at index 0 
+bool dsv_pack(DSVector **handle);                                       // remove empty slots between data slots -1-3--6 becomes 1,3,6
 
 /**********************************************************************\
  PRIVATE
@@ -358,6 +363,16 @@ bool dsv_forEach(DSVector **handle, bool (*fn_ptr)(void**)){
 }
 
 
+int dsv_getNumberOfSlots(DSVector *handle){ 
+    if (!handle){
+        fprintf(stderr, "DS_VECTOR/dsv_getNumberOfSlots: Argument 'handle' is null!");
+        abort();
+    }
+    
+    return handle->length;
+}
+
+
 int dsv_getNumberOfItems(DSVector *handle){ 
     if (!handle){
         fprintf(stderr, "DS_VECTOR/dsv_getNumberOfItems: Argument 'handle' is null!");
@@ -398,13 +413,94 @@ int dsv_getLastItem(DSVector *handle){
 bool dsv_appendItem(DSVector **handle, void *data){ 
     if (!handle){
         fprintf(stderr, "DS_VECTOR/dsv_appendItem: Argument 'handle' is null!");
-        abort();
+        return false;
     }
 
     unsigned lastItem = dsv_getLastItem(*handle);
     lastItem++; 
-    //printf("lastitem: %d \n",lastItem);
     return dsv_set(handle, lastItem, data);
+}
+
+
+bool dsv_prependItem(DSVector **handle, void *data) {
+    if (!handle) {
+        fprintf(stderr, "DS_VECTOR/dsv_prependItem: Argument 'handle' is null!\n");
+        return false;               // avoid abort()
+    }
+
+    DSVector *old = *handle;
+    int length = old->length;
+    DSVector *newVector = NULL;
+
+    if (old->mode == DS_VECTOR_MODE_DOUBLE) {
+        newVector = dsv_createDoubleMode(length + 1);
+    } 
+    else if (old->mode == DS_VECTOR_MODE_STEP) {
+        newVector = dsv_createStepMode(length + 1, old->step);
+    } 
+    else {
+        fprintf(stderr, "DS_VECTOR/dsv_prependItem: Unknown mode %d\n", old->mode);
+        return false;
+    }
+    if (!newVector) return false;
+
+    /* insert new element at index 0 */
+    if (!dsv_set(&newVector, 0, data)) {
+        dsv_destroy(newVector);
+        return false;
+    }
+
+    /* copy existing elements, shifting by +1 */
+    for (int i = 0; i < length; ++i) {
+        void *element = old->data[i];
+        if (element == NULL) continue;
+        if (!dsv_set(&newVector, i + 1, element)) {
+            dsv_destroy(newVector);
+            return false;
+        }
+    }
+
+    dsv_destroy(old);
+    *handle = newVector;
+    return true;
+}
+
+
+
+bool dsv_prependItem_old(DSVector **handle, void *data){ 
+    if (!handle){
+        fprintf(stderr, "DS_VECTOR/dsv_prependItem: Argument 'handle' is null!");
+        abort();
+    }
+    
+    DSVector *newVector = NULL;
+    int length = (*handle)->length;
+    int step = 0; 
+    
+    if ((*handle)->mode == DS_VECTOR_MODE_DOUBLE){
+        newVector = dsv_createDoubleMode(length + 1);
+    } 
+    else if ((*handle)->mode == DS_VECTOR_MODE_STEP){
+        step = (*handle)->step;
+        newVector = dsv_createStepMode(length +1, step);
+    }    
+    if (newVector == NULL) return false;
+    
+    if (!dsv_set(&newVector, 0, data)){
+        return false;
+    }
+    
+    printf("LENGTH %d \n", length);
+    
+    for (int i=1; i<length+1; ++i){ 
+        if ((*handle)->data[i] == NULL) continue;   
+        dsv_set(&newVector, i, (*handle)->data[i-1]);
+    }
+
+    dsv_destroy(*handle); 
+    *handle = newVector;
+    return true;
+
 }
 
 

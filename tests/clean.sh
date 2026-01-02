@@ -6,3 +6,5 @@ rm ./append_item
 rm ./shrinkToFit 
 rm ./pack 
 rm ./forEach 
+rm ./resize 
+rm ./prepend_item

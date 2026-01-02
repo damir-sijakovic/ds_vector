@@ -1,6 +1,9 @@
 DS_VECTOR
 =========
 
+v0.5.2
+* Added: bool dsv_prependItem(DSVector **handle, void *data);
+
 v0.5
 * Cleanup 
 * Turned into header lib (just copy ds_vector.h to your project)
